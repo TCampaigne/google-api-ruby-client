@@ -61,6 +61,7 @@ module Google
           Google::APIClient::ResumableUpload.new(options)
         )
         @media_upload.chunk_size = 1000
+        @media_upload
       end
 
       ##
