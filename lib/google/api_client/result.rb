@@ -19,7 +19,7 @@ module Google
     # This class wraps a result returned by an API call.
     class Result
       extend Forwardable
-      
+
       ##
       # Init the result
       #
@@ -52,7 +52,7 @@ module Google
 
       # @!attribute [r] resumable_upload
       # @return [Google::APIClient::ResumableUpload] For resuming media uploads
-      def resumable_upload        
+      def resumable_upload
         @media_upload ||= (
           options = self.reference.to_hash.merge(
             :uri => self.headers['location'],
@@ -60,8 +60,9 @@ module Google
           )
           Google::APIClient::ResumableUpload.new(options)
         )
+        @media_upload.chunk_size = 1000
       end
-      
+
       ##
       # Get the content type of the response
       # @!attribute [r] media_type
@@ -77,7 +78,7 @@ module Google
           return nil
         end
       end
-      
+
       ##
       # Check if request failed
       #
@@ -97,7 +98,7 @@ module Google
       def success?
         return !self.error?
       end
-      
+
       ##
       # Extracts error messages from the response body
       #
@@ -127,7 +128,7 @@ module Google
       def data?
         !(self.body.nil? || self.body.empty? || self.media_type != 'application/json')
       end
-      
+
       ##
       # Return parsed version of the response body.
       #
@@ -180,7 +181,7 @@ module Google
 
       ##
       # Build a request for fetching the next page of data
-      # 
+      #
       # @return [Google::APIClient::Request]
       #   API request for retrieving next page
       def next_page
@@ -213,7 +214,7 @@ module Google
 
       ##
       # Build a request for fetching the previous page of data
-      # 
+      #
       # @return [Google::APIClient::Request]
       #   API request for retrieving previous page
       def prev_page
@@ -227,7 +228,7 @@ module Google
           Hash[self.reference].merge(:parameters => merged_parameters)
         )
       end
-      
+
       ##
       # Pagination scheme used by this request/response
       #
