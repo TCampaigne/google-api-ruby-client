@@ -164,10 +164,19 @@ module Google
         # Resumamble slightly different than other upload protocols in that it requires at least
         # 2 requests.
         if self.upload_type == 'resumable'
-          upload =  result.resumable_upload
-          unless upload.complete?
-            logger.debug { "#{self.class} Sending upload body" }
-            result = upload.send_all(connection)
+          upload = result.resumable_upload
+          upload_complete = upload.complete?
+          logger.debug { "#{upload.class} Sending upload body" }
+          while !upload_complete
+            env = upload.to_env(connection)
+            logger.debug  { "#{upload.class} Sending API request #{env[:method]} #{env[:url].to_s} #{env[:request_headers]}" }
+            http_response = connection.app.call(env)
+            result = upload.process_http_response(http_response)
+
+            upload = result.resumable_upload
+            upload_complete = upload.complete?
+
+            logger.debug { "#{upload.class} Result: #{result.status} #{result.headers}" }
           end
         end
         return result
