@@ -28,7 +28,7 @@ module Google
     # Represents an API request.
     class Request
       include Google::APIClient::Logging
-      
+
       MULTIPART_BOUNDARY = "-----------RubyApiMultipartPost".freeze
 
       # @return [Hash] Request parameters
@@ -167,7 +167,7 @@ module Google
           upload =  result.resumable_upload
           unless upload.complete?
             logger.debug { "#{self.class} Sending upload body" }
-            result = upload.send(connection)
+            result = upload.send_all(connection)
           end
         end
         return result
